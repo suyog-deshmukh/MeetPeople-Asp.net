@@ -1,0 +1,9 @@
+#jumbotron-image {
+  background-image: url("/assets/images/meet.jpg");
+  background-size: cover;
+  height: 450px;
+  font-weight: bold;
+  color: white;
+  background-position: center;
+  background-repeat: no-repeat;
+}
