@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,6 +38,9 @@ namespace API.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
+            Console.WriteLine("^^^^^^^^^^^^^^^^^^^^^^");
+            Console.WriteLine(username);
+            Console.WriteLine("^^^^^^^^^^^^^^^");
             return await _userRepository.GetMemberAsync(username);
         }
     }
