@@ -20,7 +20,7 @@ export class NavComponent implements OnInit {
 
   login(form: NgForm) {
     this.accountService
-      .login(form.value.username, form.value.password)
+      .login(form.value.username.toLowerCase(), form.value.password)
       .subscribe(
         (response) => {
           this.router.navigateByUrl('/members');

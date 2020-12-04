@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
@@ -46,6 +47,11 @@ namespace API.Data
         public async Task<AppUser> GetUserByUsernameAsync(string username)
         {
             return await _context.Users.Include(p => p.Photos).SingleOrDefaultAsync(x => x.UserName == username);
+        }
+
+        public Task GetUserByUsernameAsync(ClaimsPrincipal user)
+        {
+            throw new System.NotImplementedException();
         }
 
         public async Task<bool> SaveAllAsync()
