@@ -26,10 +26,9 @@ export class AccountService {
     );
   }
 
-  register(username, password) {
-    const user = { username, password };
+  register(formValue) {
 
-    return this.http.post(this.baseUrl + '/account/register', user).pipe(
+    return this.http.post(this.baseUrl + '/account/register', formValue).pipe(
       map((user: User) => {
         if (user) {
           this.setCurrentUser(user);

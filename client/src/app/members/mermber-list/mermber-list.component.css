@@ -2,7 +2,9 @@
   height: 100px;
   width: 100px;
 }
-
+.my-pagination /deep/ .ngx-pagination .current {
+  background: orange;
+}
 /* .card-group {
     min-width: 150px;
     margin-right: 5px;

@@ -17,7 +17,7 @@ export class PhotoEditorComponent implements OnInit {
   @Input() member: Member;
   uploader: FileUploader;
   hasBaseDropZoneOver: boolean;
-  user;
+  user: User;
   baseUrl = environment.apiUrl;
   constructor(private accountService: AccountService, private memberService: MembersService) {
     this.accountService.currentUser$
@@ -44,8 +44,13 @@ export class PhotoEditorComponent implements OnInit {
     }
     this.uploader.onSuccessItem = (item, response, status, header) => {
       if (response) {
-        const photo = JSON.parse(response);
+        const photo: Photo = JSON.parse(response);
         this.member.photos.push(photo)
+        if(photo.isMain) {
+          this.user.photoUrl = photo.url;
+          this.member.photoUrl = photo.url;
+          this.accountService.setCurrentUser(this.user);
+        }
       }
     }
   }
