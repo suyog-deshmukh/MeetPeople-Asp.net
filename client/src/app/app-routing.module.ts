@@ -11,6 +11,7 @@ import { MermberDetailComponent } from './members/mermber-detail/mermber-detail.
 import { MermberListComponent } from './members/mermber-list/mermber-list.component';
 import { MessagesComponent } from './messages/messages.component';
 import { PreventUnsavedChanges } from './prevent-unsaved-changes.guard';
+import { MemberDetailResolver } from './resolver/member-detail.resolver';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -20,7 +21,7 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       { path: 'members', component: MermberListComponent },
-      { path: 'members/:username', component: MermberDetailComponent },
+      { path: 'members/:username', component: MermberDetailComponent, resolve: {member: MemberDetailResolver} },
       { path: 'member/edit', component: MemberEditComponent, canDeactivate: [PreventUnsavedChanges] },
       { path: 'lists', component: ListsComponent },
       { path: 'messages', component: MessagesComponent },

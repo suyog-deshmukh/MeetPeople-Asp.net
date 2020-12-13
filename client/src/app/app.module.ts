@@ -26,7 +26,8 @@ import { LoadingInterceptor } from './loading.interceptor';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
 import { TextInputComponent } from './form/text-input/text-input.component';
 import { DateInputComponent } from './form/date-input/date-input.component';
-import { NgxPaginationModule } from 'ngx-pagination'; // <-- import the module
+import { NgxPaginationModule } from 'ngx-pagination';
+import { MemberMessagesComponent } from './members/member-messages/member-messages.component'; // <-- import the module
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { NgxPaginationModule } from 'ngx-pagination'; // <-- import the module
     PhotoEditorComponent,
     TextInputComponent,
     DateInputComponent,
+    MemberMessagesComponent,
   ],
   imports: [
     BrowserModule,

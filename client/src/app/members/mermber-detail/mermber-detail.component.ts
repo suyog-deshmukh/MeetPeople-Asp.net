@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import {NgxGalleryOptions} from '@kolkov/ngx-gallery';
-import {NgxGalleryImage} from '@kolkov/ngx-gallery';
-import {NgxGalleryAnimation} from '@kolkov/ngx-gallery';
+import { NgxGalleryOptions } from '@kolkov/ngx-gallery';
+import { NgxGalleryImage } from '@kolkov/ngx-gallery';
+import { NgxGalleryAnimation } from '@kolkov/ngx-gallery';
+import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
+import { MessageService } from 'src/app/messages/message.service';
 import { Member } from 'src/app/models/member';
+import { Message } from 'src/app/models/message';
 import { MembersService } from '../members.service';
 
 @Component({
@@ -12,16 +15,25 @@ import { MembersService } from '../members.service';
   styleUrls: ['./mermber-detail.component.css'],
 })
 export class MermberDetailComponent implements OnInit {
+  @ViewChild('memberTabs',{ static: true}) memberTabs: TabsetComponent;
   member: Member;
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
+  activeTab: TabDirective;
+  messages: Message[] = [];
   constructor(
     private memberService: MembersService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
-    this.loadMember()
+    this.route.data.subscribe(data => {
+      this.member = data.member
+    })
+    this.route.queryParams.subscribe((params) =>
+      params.tab ? this.selectTab(params.tab) : this.selectTab(0)
+    );
     this.galleryOptions = [
       {
         width: '500px',
@@ -29,7 +41,7 @@ export class MermberDetailComponent implements OnInit {
         imagePercent: 100,
         thumbnailsColumns: 4,
         imageAnimation: NgxGalleryAnimation.Slide,
-        preview: false
+        preview: false,
       },
       // max-width 800
       {
@@ -39,38 +51,45 @@ export class MermberDetailComponent implements OnInit {
         imagePercent: 80,
         thumbnailsPercent: 20,
         thumbnailsMargin: 20,
-        thumbnailMargin: 20
+        thumbnailMargin: 20,
       },
       // max-width 400
       {
         breakpoint: 400,
-        preview: false
-      }
+        preview: false,
+      },
     ];
-    
-  }
-  loadMember() {
-    this.route.paramMap.subscribe((paramMap: ParamMap) => {
-      const username = paramMap.get('username');
-      console.log(username)
-      console.log(username)
-      this.memberService.getMember(username).subscribe(member => {
-        console.log("username")
-        this.member = member;
-        this.galleryImages = this.getImages()
-      })
-    });
+    this.galleryImages = this.getImages();
+
   }
 
   getImages() {
     const imageUrls = [];
-    for(const photo of this.member.photos) {
+    for (const photo of this.member.photos) {
       imageUrls.push({
         small: photo?.url,
         medium: photo?.url,
         big: photo?.url,
-      })
+      });
     }
-    return imageUrls
+    return imageUrls;
+  }
+
+  onTabActivated(data: TabDirective) {
+    this.activeTab = data;
+    if (this.activeTab.heading === 'Messages' && this.messages.length === 0) {
+      this.loadMessage();
+    }
+  }
+  loadMessage() {
+    this.messageService
+      .getMessageThread(this.member.username)
+      .subscribe((messages) => {
+        this.messages = messages;
+      });
+  }
+
+  selectTab(tabId: number) {
+    this.memberTabs.tabs[tabId].active = true;
   }
 }
