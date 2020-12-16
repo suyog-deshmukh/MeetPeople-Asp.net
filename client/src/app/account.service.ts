@@ -4,6 +4,7 @@ import { ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { User } from './models/user';
+import { PresenceHubService } from './presence-hub.service';
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
@@ -12,7 +13,10 @@ export class AccountService {
 
   currentUser$ = this.currentUserSource.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private presenceService: PresenceHubService
+  ) {}
   login(username, password) {
     const modal = { username: username, password: password };
     return this.http.post(this.baseUrl + '/account/login', modal).pipe(
@@ -20,18 +24,19 @@ export class AccountService {
         const user = response;
         if (user) {
           this.setCurrentUser(user);
-
+          this.presenceService.createHubConnection(user)
         }
       })
     );
   }
 
   register(formValue) {
-
     return this.http.post(this.baseUrl + '/account/register', formValue).pipe(
       map((user: User) => {
         if (user) {
           this.setCurrentUser(user);
+          this.presenceService.createHubConnection(user)
+
         }
         return user;
       })
@@ -39,9 +44,9 @@ export class AccountService {
   }
 
   setCurrentUser(user: User) {
-    user.roles = []
+    user.roles = [];
     const roles = this.getDecodedToken(user.token).role;
-    Array.isArray(roles) ? user.roles = roles : user.roles.push(roles)
+    Array.isArray(roles) ? (user.roles = roles) : user.roles.push(roles);
     localStorage.setItem('user', JSON.stringify(user));
 
     this.currentUserSource.next(user);
@@ -49,9 +54,11 @@ export class AccountService {
   logout() {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
+    this.presenceService.stopHubConnection()
+
   }
 
   getDecodedToken(token) {
-    return JSON.parse(atob(token.split(".")[1]));
+    return JSON.parse(atob(token.split('.')[1]));
   }
 }

@@ -1,24 +1,27 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Member } from 'src/app/models/member';
+import { PresenceHubService } from 'src/app/presence-hub.service';
 import { MembersService } from '../members.service';
 
 @Component({
   selector: 'app-member-card',
   templateUrl: './member-card.component.html',
-  styleUrls: ['./member-card.component.css']
+  styleUrls: ['./member-card.component.css'],
 })
 export class MemberCardComponent implements OnInit {
-@Input() member: Member;
-  constructor(private memberService: MembersService, private toastr: ToastrService) { }
+  @Input() member: Member;
+  constructor(
+    private memberService: MembersService,
+    private toastr: ToastrService,
+    public presenceService: PresenceHubService
+  ) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   addLike(member: Member) {
     this.memberService.addLike(member.username).subscribe(() => {
-      this.toastr.success('You have liked '+ member.knownAs)
-    })
+      this.toastr.success('You have liked ' + member.knownAs);
+    });
   }
-
 }

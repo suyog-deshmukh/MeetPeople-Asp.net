@@ -32,7 +32,11 @@
   </div>
   <div class="card-body">
     <h5 class="card-title">
-      <i class="fa fa-user fa-0.5x mr-1"></i>{{ member.knownAs }},
+      <span [class.is-online]="(presenceService.onlineUsers$ | async).includes(member.username)">
+        
+        <i class="fa fa-user fa-0.5x mr-1"></i>
+      </span>
+      {{ member.knownAs }},
       {{ member.age }}
     </h5>
     <p class="card-text">{{ member.city }}</p>
